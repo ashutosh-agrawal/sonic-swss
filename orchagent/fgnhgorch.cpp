@@ -1287,18 +1287,6 @@ bool FgNhgOrch::isRouteFineGrained(sai_object_id_t vrf_id, const IpPrefix &ipPre
                 }
             }
         }
-        if (static_fgnhg)
-        {
-            SWSS_LOG_DEBUG("Route %s:%s vrf %" PRIx64 " default_vrf %" PRIx64 " IS fine grained static ECMP",
-                            ipPrefix.to_string().c_str(), nextHops.to_string().c_str(), vrf_id, gVirtualRouterId);
-            return true;
-        }
-        else
-        {
-            SWSS_LOG_DEBUG("Route %s:%s vrf %" PRIx64 " default_vrf %" PRIx64 " Static FGNHG ECMP NOT found",
-                            ipPrefix.to_string().c_str(), nextHops.to_string().c_str(), vrf_id, gVirtualRouterId);
-            return false;
-        }
     }
     SWSS_LOG_DEBUG("Route %s:%s vrf %" PRIx64 " default_vrf %" PRIx64 " IS fine grained ECMP",
                     ipPrefix.to_string().c_str(), nextHops.to_string().c_str(), vrf_id, gVirtualRouterId);
