@@ -288,6 +288,7 @@ namespace intfmgr_ut
         intfmgr.setSagFdbEntry("replace", "Ethernet0", "02:03:04:05:06:07");
         intfmgr.setSagFdbEntry("replace", "VlanABC", "02:03:04:05:06:07");
         intfmgr.setSagFdbEntry("replace", "Vlan100", gMacAddress.to_string());
+        intfmgr.setSagFdbEntry("replace", "Vlan100", "invalid");
         EXPECT_TRUE(mockCallArgs.empty());
 
         FailBridgeFdbCommand = true;
@@ -363,6 +364,42 @@ namespace intfmgr_ut
         EXPECT_FALSE(appSagTable.get("GLOBAL", values));
 
         intfmgr.doSagTask(keys, {}, "UNKNOWN");
+    }
+
+    TEST_F(IntfMgrTest, testInvalidSagGatewayMacIsRejected)
+    {
+        gMacAddress = swss::MacAddress("00:11:22:33:44:55");
+        gSagMacAddress = swss::MacAddress("00:aa:bb:cc:dd:ee");
+        swss::IntfMgr intfmgr(m_config_db.get(), m_app_db.get(), m_state_db.get(), cfg_intf_tables);
+
+        const std::vector<std::string> keys = {"GLOBAL"};
+        mockCallArgs.clear();
+        intfmgr.doSagTask(keys, {{"gateway_mac", "invalid"}}, SET_COMMAND);
+
+        swss::Table appSagTable(m_app_db.get(), APP_SAG_TABLE_NAME);
+        std::vector<swss::FieldValueTuple> values;
+        EXPECT_FALSE(appSagTable.get("GLOBAL", values));
+        EXPECT_TRUE(mockCallArgs.empty());
+
+        intfmgr.m_stateVlanTable.set("Vlan300", {{"state", "ok"}}, "SET", "");
+        intfmgr.m_cfgSagTable.set("GLOBAL", {{"gateway_mac", "invalid"}});
+        EXPECT_TRUE(intfmgr.doIntfGeneralTask(
+            {"Vlan300"}, {{"static_anycast_gateway", "true"}}, SET_COMMAND));
+
+        EXPECT_FALSE(commandWasIssued("Vlan300 address"));
+        EXPECT_FALSE(commandWasIssued("bridge fdb"));
+
+        swss::Table appIntfTable(m_app_db.get(), APP_INTF_TABLE_NAME);
+        ASSERT_TRUE(appIntfTable.get("Vlan300", values));
+        std::string sag;
+        ASSERT_TRUE(getFieldValue(values, "static_anycast_gateway", sag));
+        EXPECT_EQ(sag, "false");
+
+        mockCallArgs.clear();
+        EXPECT_TRUE(intfmgr.doIntfGeneralTask(
+            {"Vlan300"}, {{"static_anycast_gateway", "false"}}, SET_COMMAND));
+        EXPECT_TRUE(commandWasIssued("bridge fdb del 00:aa:bb:cc:dd:ee dev Bridge vlan 300 permanent"));
+        EXPECT_TRUE(commandWasIssued("/sbin/ip link set Vlan300 address 00:11:22:33:44:55"));
     }
 
     TEST_F(IntfMgrTest, testDoIntfGeneralTaskStaticAnycastGateway)

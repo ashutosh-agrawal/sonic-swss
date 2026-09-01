@@ -30,6 +30,18 @@ using namespace swss;
 extern MacAddress gMacAddress;
 extern MacAddress gSagMacAddress;
 
+static bool canonicalizeMacAddress(const string &input, string &output)
+{
+    uint8_t bytes[ETHER_ADDR_LEN];
+    if (!MacAddress::parseMacString(input, bytes))
+    {
+        return false;
+    }
+
+    output = MacAddress(bytes).to_string();
+    return true;
+}
+
 IntfMgr::IntfMgr(DBConnector *cfgDb, DBConnector *appDb, DBConnector *stateDb, const vector<string> &tableNames) :
         Orch(cfgDb, tableNames),
         m_cfgIntfTable(cfgDb, CFG_INTF_TABLE_NAME),
@@ -141,6 +153,7 @@ void IntfMgr::setSagFdbEntry(const string &op, const string &alias, const string
 {
     stringstream cmd;
     string res;
+    string canonical_mac;
 
     if (op != "add" && op != "replace" && op != "del")
     {
@@ -148,7 +161,14 @@ void IntfMgr::setSagFdbEntry(const string &op, const string &alias, const string
         return;
     }
 
-    if (mac_str == gMacAddress.to_string())
+    if (!canonicalizeMacAddress(mac_str, canonical_mac))
+    {
+        SWSS_LOG_ERROR("Invalid SAG MAC '%s' for %s on %s",
+                       mac_str.c_str(), op.c_str(), alias.c_str());
+        return;
+    }
+
+    if (canonical_mac == gMacAddress.to_string())
     {
         // Don't add or del for global system MAC address
         return;
@@ -169,7 +189,7 @@ void IntfMgr::setSagFdbEntry(const string &op, const string &alias, const string
         }
 
         // cmd format: bridge fdb add 00:11:22:33:44:55 dev Bridge vlan 3 permanent
-        cmd << "bridge fdb " << op << " " << mac_str << " dev Bridge vlan " << vlan_id << " permanent";
+        cmd << "bridge fdb " << op << " " << canonical_mac << " dev Bridge vlan " << vlan_id << " permanent";
 
         int ret = swss::exec(cmd.str(), res);
         if (ret)
@@ -1100,16 +1120,27 @@ bool IntfMgr::doIntfGeneralTask(const vector<string>& keys,
                         // before change interface MAC, set interface down and up to regenerate IPv6 LL by MAC
                         if (sag == "true")
                         {
-                            m_sagIntfList[alias] = true;
+                            string canonical_gwmac;
+                            if (!canonicalizeMacAddress(gwmac, canonical_gwmac))
+                            {
+                                SWSS_LOG_ERROR("Invalid SAG gateway_mac '%s', skipping enable", gwmac.c_str());
+                                FieldValueTuple sagFvTuple("static_anycast_gateway", "true");
+                                data.erase(std::remove(data.begin(), data.end(), sagFvTuple), data.end());
+                                data.push_back(FieldValueTuple("static_anycast_gateway", "false"));
+                            }
+                            else
+                            {
+                                m_sagIntfList[alias] = true;
 
-                            setIntfState(alias, false);
-                            setIntfMac(alias, gwmac);
-                            setIntfState(alias, true);
-                            // add this MAC fdb into bridge
-                            setSagFdbEntry("replace", alias, gwmac);
+                                setIntfState(alias, false);
+                                setIntfMac(alias, canonical_gwmac);
+                                setIntfState(alias, true);
+                                // add this MAC fdb into bridge
+                                setSagFdbEntry("replace", alias, canonical_gwmac);
 
-                            FieldValueTuple fvTuple("mac_addr", gwmac);
-                            data.push_back(fvTuple);
+                                FieldValueTuple fvTuple("mac_addr", canonical_gwmac);
+                                data.push_back(fvTuple);
+                            }
                         }
                         else if (sag == "false")
                         {
@@ -1328,11 +1359,17 @@ void IntfMgr::doSagTask(const vector<string>& keys,
             SWSS_LOG_ERROR("gateway_mac field is missing in SAG configuration");
             return;
         }
-        FieldValueTuple gwmac("gateway_mac", MacAddress(mac).to_string());
+        string canonical_mac;
+        if (!canonicalizeMacAddress(mac, canonical_mac))
+        {
+            SWSS_LOG_ERROR("Invalid SAG gateway_mac '%s', skipping", mac.c_str());
+            return;
+        }
+        FieldValueTuple gwmac("gateway_mac", canonical_mac);
         fvAppSag.push_back(gwmac);
         m_appSagTableProducer.set("GLOBAL", fvAppSag);
 
-        updateSagMac(mac);
+        updateSagMac(canonical_mac);
     }
     else if (op == DEL_COMMAND)
     {
