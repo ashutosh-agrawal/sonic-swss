@@ -1235,10 +1235,16 @@ void RouteOrch::doTask(ConsumerBase& consumer)
             {
                 removeOverlayNextHops(it_nhg.second, it_nhg.first);
             }
-            else if (m_syncdNextHopGroups[it_nhg.first].ref_count == 0)
+            else
             {
+                auto next_hop_group = m_syncdNextHopGroups.find(it_nhg.first);
+                if (next_hop_group == m_syncdNextHopGroups.end() || next_hop_group->second.ref_count != 0)
+                {
+                    continue;
+                }
+
                 // Pass the flag to indicate if the NextHop Group as Default Route NH Members as swapped.
-                removeNextHopGroup(it_nhg.first, m_syncdNextHopGroups[it_nhg.first].is_default_route_nh_swap);
+                removeNextHopGroup(it_nhg.first, next_hop_group->second.is_default_route_nh_swap);
             }
         }
         /* Reduce reference for srv6 next hop group */
@@ -1370,8 +1376,17 @@ void RouteOrch::increaseNextHopRefCount(const NextHopGroupKey &nexthops)
     }
     else
     {
-        m_syncdNextHopGroups[nexthops].ref_count ++;
-        SWSS_LOG_INFO("Routeorch inc Ref count %u for next_hops: %s", m_syncdNextHopGroups[nexthops].ref_count, nexthops.to_string().c_str());
+        auto next_hop_group = m_syncdNextHopGroups.find(nexthops);
+        if (next_hop_group == m_syncdNextHopGroups.end())
+        {
+            SWSS_LOG_ERROR("Attempt to increase ref count for non-existent next hop group %s",
+                    nexthops.to_string().c_str());
+            return;
+        }
+
+        next_hop_group->second.ref_count ++;
+        SWSS_LOG_INFO("Routeorch inc Ref count %u for next_hops: %s",
+                next_hop_group->second.ref_count, nexthops.to_string().c_str());
     }
 }
 
@@ -2546,6 +2561,41 @@ bool RouteOrch::addRoutePost(const RouteBulkContext& ctx, const NextHopGroupKey 
             SWSS_LOG_ERROR("Failed to create route %s with next hop(s) %s",
                     ipPrefix.to_string().c_str(), nextHops.to_string().c_str());
 
+            /* SAI may retain a route absent from RouteOrch's cache. Remove
+             * the stale route and retry the normal full create; this applies
+             * to single next hops and blackholes as well as ECMP routes. */
+            if (status == SAI_STATUS_ITEM_ALREADY_EXISTS)
+            {
+                sai_route_entry_t route_entry{};
+                route_entry.vr_id = vrf_id;
+                route_entry.switch_id = gSwitchId;
+                copy(route_entry.destination, ipPrefix);
+
+                sai_status_t remove_status = sai_route_api->remove_route_entry(&route_entry);
+                if (ctx.nhg_index.empty() && nextHops.getSize() > 1)
+                {
+                    /* A failed create has not acquired a reference to this
+                     * RouteOrch-owned group. Do not leave an unused group
+                     * behind if the queued route is withdrawn. */
+                    removeNextHopGroup(nextHops);
+                }
+
+                if (remove_status != SAI_STATUS_SUCCESS)
+                {
+                    SWSS_LOG_ERROR("Failed to remove stale route %s, rv:%d",
+                            ipPrefix.to_string().c_str(), remove_status);
+                    task_process_status handle_status = handleSaiRemoveStatus(SAI_API_ROUTE, remove_status);
+                    if (handle_status != task_success)
+                    {
+                        return parseHandleSaiStatusFailure(handle_status);
+                    }
+                }
+
+                SWSS_LOG_NOTICE("Reconciled stale route %s; retrying create with next hops %s",
+                        ipPrefix.to_string().c_str(), nextHops.to_string().c_str());
+                return false;
+            }
+
             /* Check that the next hop group is not owned by NhgOrch. */
             if (ctx.nhg_index.empty() && nextHops.getSize() > 1)
             {
@@ -2557,6 +2607,10 @@ bool RouteOrch::addRoutePost(const RouteBulkContext& ctx, const NextHopGroupKey 
             {
                 return parseHandleSaiStatusFailure(handle_status);
             }
+            /* A handled SAI error is not proof that this route was created.
+             * Publishing bookkeeping here could point at a removed NHG or
+             * at a route with different next-hop attributes. */
+            return false;
         }
 
         if (ipPrefix.isV4())
