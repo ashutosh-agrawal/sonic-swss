@@ -195,7 +195,7 @@ RouteSync::RouteSync(RedisPipeline *pipeline) :
     {
         try
         {
-            m_stateDb = std::make_shared<DBConnector>("STATE_DB", 0);
+            m_stateDb = std::make_shared<DBConnector>("STATE_DB", 0, false, "", true);
         }
         catch (const std::exception &e)
         {
