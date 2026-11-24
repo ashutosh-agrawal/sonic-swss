@@ -648,7 +648,7 @@ int main(int argc, char **argv)
 
     // Instantiate database connectors
     DBConnector appl_db("APPL_DB", 0, false, "", true);
-    DBConnector config_db("CONFIG_DB", 0, false);
+    DBConnector config_db("CONFIG_DB", 0);
     DBConnector state_db("STATE_DB", 0, false, "", true);
 
     // Get switch_type

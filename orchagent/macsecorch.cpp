@@ -686,7 +686,7 @@ MACsecOrch::MACsecOrch(
     if (post_state == "switch-level-post-in-progress" ||
         post_state == "macsec-level-post-in-progress" )
     {
-        m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0, false);
+        m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0);
         m_postCompletionNotificationConsumer = new swss::NotificationConsumer(m_notificationsDb.get(), "NOTIFICATIONS");
         auto postCompletionNotificatier = new Notifier(m_postCompletionNotificationConsumer, this, "POST_COMPLETION__NOTIFICATIONS");
         Orch::addExecutor(postCompletionNotificatier);

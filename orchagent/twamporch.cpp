@@ -146,7 +146,7 @@ TwampOrch::TwampOrch(TableConnector confDbConnector, TableConnector stateDbConne
     }
 
     /* Add TWAMP session event notification support */
-    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0, false);
+    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0);
     m_twampNotificationConsumer = new swss::NotificationConsumer(notificationsDb, "NOTIFICATIONS");
     m_twampNotificationConsumer->setOpAllowList({"twamp_session_event"});
     m_twampNotificationConsumer->setStatsLabel("TwampOrch:twamp_session_event");

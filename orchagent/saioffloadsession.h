@@ -697,7 +697,7 @@ public:
                             Derived::m_name.c_str());
         }
 
-        m_asic_db = std::make_shared<DBConnector>("ASIC_DB", 0, false);
+        m_asic_db = std::make_shared<DBConnector>("ASIC_DB", 0);
         m_counter_db = std::make_shared<DBConnector>("COUNTERS_DB", 0, false, "", true);
         m_counters_name_map = std::make_unique<Table>(m_counter_db.get(), m_name_map_name);
 

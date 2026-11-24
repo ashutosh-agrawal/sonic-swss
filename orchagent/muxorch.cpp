@@ -1398,7 +1398,7 @@ MuxAclHandler::MuxAclHandler(sai_object_id_t port, string alias)
     SWSS_LOG_ENTER();
 
     string value;
-    shared_ptr<DBConnector> m_config_db = shared_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0, false));
+    shared_ptr<DBConnector> m_config_db = shared_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0));
     unique_ptr<Table> m_systemDefaultsTable = unique_ptr<Table>(new Table(m_config_db.get(), "SYSTEM_DEFAULTS"));
     m_systemDefaultsTable->hget("mux_tunnel_egress_acl", "status", value);
     is_ingress_acl_ = value != "enabled";

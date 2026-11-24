@@ -29,7 +29,7 @@ int main(int argc, char **argv)
             CFG_FABRIC_MONITOR_PORT_TABLE_NAME,
         };
 
-        DBConnector cfgDb("CONFIG_DB", 0, false);
+        DBConnector cfgDb("CONFIG_DB", 0);
         DBConnector appDb("APPL_DB", 0, false, "", true);
 
         FabricMgr fabricmgr(&cfgDb, &appDb, cfg_fabric_tables);

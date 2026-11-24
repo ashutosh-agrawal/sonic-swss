@@ -51,7 +51,7 @@ class L3AdmitManager : public ObjectManagerInterface
 {
   public:
     L3AdmitManager(P4OidMapper *p4oidMapper, ResponsePublisherInterface *publisher)
-      : m_asic_db("ASIC_DB", 0, false), m_asic_state_table(&m_asic_db, "ASIC_STATE") {
+      : m_asic_db("ASIC_DB", 0), m_asic_state_table(&m_asic_db, "ASIC_STATE") {
         SWSS_LOG_ENTER();
 
         assert(p4oidMapper != nullptr);

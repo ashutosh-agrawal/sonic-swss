@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 
     try
     {
-        DBConnector cfgDb("CONFIG_DB", 0, false);
+        DBConnector cfgDb("CONFIG_DB", 0);
         DBConnector appDb("APPL_DB", 0, false, "", true);
         DBConnector stateDb("STATE_DB", 0, false, "", true);
 

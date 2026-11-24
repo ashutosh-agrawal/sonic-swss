@@ -23,7 +23,7 @@ CounterCheckOrch& CounterCheckOrch::getInstance(DBConnector *db)
 
 CounterCheckOrch::CounterCheckOrch(DBConnector *db, vector<string> &tableNames):
     Orch(db, tableNames),
-    m_countersDb(new DBConnector("COUNTERS_DB", 0, false)),
+    m_countersDb(new DBConnector("COUNTERS_DB", 0)),
     m_countersTable(new Table(m_countersDb.get(), COUNTERS_TABLE))
 {
     SWSS_LOG_ENTER();

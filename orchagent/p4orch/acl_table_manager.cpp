@@ -90,7 +90,7 @@ std::vector<sai_attribute_t> getUdfGroupSaiAttrs(const P4UdfField& udf_field,
 
 AclTableManager::AclTableManager(P4OidMapper *p4oidMapper, ResponsePublisherInterface *publisher)
     : m_p4OidMapper(p4oidMapper),
-      m_asic_db("ASIC_DB", 0, false),
+      m_asic_db("ASIC_DB", 0),
       m_asic_state_table(&m_asic_db, "ASIC_STATE"),
       m_publisher(publisher)
 {

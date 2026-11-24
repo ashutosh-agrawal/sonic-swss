@@ -62,7 +62,7 @@ HFTelOrch::HFTelOrch(
     const vector<string> &tables)
     : Orch(cfg_db, tables),
       m_state_telemetry_session(state_db, STATE_HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE_NAME),
-      m_asic_db("ASIC_DB", 0, false),
+      m_asic_db("ASIC_DB", 0),
       m_sai_hostif_obj(SAI_NULL_OBJECT_ID),
       m_sai_hostif_trap_group_obj(SAI_NULL_OBJECT_ID),
       m_sai_hostif_user_defined_trap_obj(SAI_NULL_OBJECT_ID),

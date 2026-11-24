@@ -77,7 +77,7 @@ FdbOrch::FdbOrch(DBConnector* applDbConnector, vector<table_name_with_pri_t> app
      * explicitly.  No change in Select-loop priority vs. the prior
      * 2-arg call.
      */
-    m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0, false);
+    m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0);
     m_fdbNotificationConsumer = new swss::NotificationConsumer(
         m_notificationsDb.get(), "NOTIFICATIONS",
         100,                                       // pri -- match swss-common default

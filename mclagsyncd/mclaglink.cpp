@@ -1793,10 +1793,10 @@ MclagLink::MclagLink(Select *select, int port) :
 
     p_state_db    = unique_ptr<DBConnector>(new DBConnector("STATE_DB", 0, false, "", true));
     p_appl_db     = unique_ptr<DBConnector>(new DBConnector("APPL_DB", 0, false, "", true));
-    p_config_db   = unique_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0, false));
-    p_asic_db     = unique_ptr<DBConnector>(new DBConnector("ASIC_DB", 0, false));
+    p_config_db   = unique_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0));
+    p_asic_db     = unique_ptr<DBConnector>(new DBConnector("ASIC_DB", 0));
     p_counters_db = unique_ptr<DBConnector>(new DBConnector("COUNTERS_DB", 0, false, "", true));
-    p_notificationsDb = unique_ptr<DBConnector>(new DBConnector("STATE_DB", 0, false));
+    p_notificationsDb = unique_ptr<DBConnector>(new DBConnector("STATE_DB", 0));
 
     p_device_metadata_tbl          = unique_ptr<Table>(new Table(p_config_db.get(), CFG_DEVICE_METADATA_TABLE_NAME));
     p_mclag_cfg_table              = unique_ptr<Table>(new Table(p_config_db.get(), CFG_MCLAG_TABLE_NAME)); 

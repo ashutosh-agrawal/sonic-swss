@@ -305,7 +305,7 @@ void SwitchOrch::initAsicSdkHealthEventNotification()
         SWSS_LOG_NOTICE("ASIC/SDK health event is not supported");
     }
 
-    DBConnector cfgDb("CONFIG_DB", 0, false);
+    DBConnector cfgDb("CONFIG_DB", 0);
     Table cfgSuppressASHETable(&cfgDb, CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME);
     string suppressedCategories;
     bool atLeastOneSupported = false;

@@ -52,7 +52,7 @@ IcmpOrch::IcmpOrch(DBConnector *db, string tableName, TableConnector stateDbIcmp
         return;
     }
 
-    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0, false);
+    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0);
     m_icmpStateNotificationConsumer = new swss::NotificationConsumer(notificationsDb, "NOTIFICATIONS");
     m_icmpStateNotificationConsumer->setOpAllowList({"icmp_echo_session_state_change"});
     m_icmpStateNotificationConsumer->setStatsLabel("IcmpOrch:icmp_echo_session_state_change");

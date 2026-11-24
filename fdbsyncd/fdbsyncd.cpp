@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     DBConnector appDb("APPL_DB", 0, false, "", true);
     RedisPipeline pipelineAppDB(&appDb);
     DBConnector stateDb("STATE_DB", 0, false, "", true);
-    DBConnector config_db("CONFIG_DB", 0, false);
+    DBConnector config_db("CONFIG_DB", 0);
 
     FdbSync sync(&pipelineAppDB, &stateDb, &config_db);
 
