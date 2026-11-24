@@ -29,7 +29,7 @@ int main(int argc, char **argv)
             CFG_SEND_TO_INGRESS_PORT_TABLE_NAME,
         };
 
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appDb("APPL_DB", 0, false, "", true);
         DBConnector stateDb("STATE_DB", 0, false, "", true);
 

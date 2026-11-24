@@ -59,7 +59,7 @@ int main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
 
-        swss::DBConnector cfgDb("CONFIG_DB", 0);
+        swss::DBConnector cfgDb("CONFIG_DB", 0, false);
         swss::DBConnector appDb("APPL_DB", 0, false, "", true);
         swss::DBConnector stateDb("STATE_DB", 0, false, "", true);
 

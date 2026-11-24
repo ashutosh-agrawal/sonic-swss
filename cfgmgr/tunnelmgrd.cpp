@@ -32,7 +32,7 @@ int main(int argc, char **argv)
             CFG_LOOPBACK_INTERFACE_TABLE_NAME
         };
 
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appDb("APPL_DB", 0, false, "", true);
 
         WarmStart::initialize("tunnelmgrd", "swss", 0, false, true);

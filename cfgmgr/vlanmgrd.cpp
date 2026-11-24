@@ -41,7 +41,7 @@ int main(int argc, char **argv)
             STATE_OPER_FDB_TABLE_NAME,
             STATE_OPER_VLAN_MEMBER_TABLE_NAME
         };
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appDb("APPL_DB", 0, false, "", true);
         DBConnector stateDb("STATE_DB", 0, false, "", true);
 

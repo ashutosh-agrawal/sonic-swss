@@ -835,7 +835,7 @@ VNetRouteOrch::VNetRouteOrch(DBConnector *db, vector<string> &tableNames, VNetOr
     handler_map_.insert(handler_pair(APP_VNET_RT_TABLE_NAME, &VNetRouteOrch::handleRoutes));
     handler_map_.insert(handler_pair(APP_VNET_RT_TUNNEL_TABLE_NAME, &VNetRouteOrch::handleTunnel));
 
-    config_db_ = shared_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0));
+    config_db_ = shared_ptr<DBConnector>(new DBConnector("CONFIG_DB", 0, false));
     state_db_ = shared_ptr<DBConnector>(new DBConnector("STATE_DB", 0, false, "", true));
     app_db_ = shared_ptr<DBConnector>(new DBConnector("APPL_DB", 0, false, "", true));
 

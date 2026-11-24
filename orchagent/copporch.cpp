@@ -194,7 +194,7 @@ const uint HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000;
 CoppOrch::CoppOrch(DBConnector* db, string tableName) :
     Orch(db, tableName),
     m_counter_db(std::shared_ptr<DBConnector>(new DBConnector("COUNTERS_DB", 0, false, "", true))),
-    m_asic_db(std::shared_ptr<DBConnector>(new DBConnector("ASIC_DB", 0))),
+    m_asic_db(std::shared_ptr<DBConnector>(new DBConnector("ASIC_DB", 0, false))),
     m_state_db(std::shared_ptr<DBConnector>(new DBConnector("STATE_DB", 0, false, "", true))),
     m_counter_table(std::unique_ptr<Table>(new Table(m_counter_db.get(), COUNTERS_TRAP_NAME_MAP))),
     m_vidToRidTable(std::unique_ptr<Table>(new Table(m_asic_db.get(), "VIDTORID"))),

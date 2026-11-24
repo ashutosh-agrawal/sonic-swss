@@ -63,7 +63,7 @@ BfdOrch::BfdOrch(DBConnector *db, string tableName, TableConnector stateDbBfdSes
 {
     SWSS_LOG_ENTER();
 
-    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0);
+    DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0, false);
     m_bfdStateNotificationConsumer = new swss::NotificationConsumer(notificationsDb, "NOTIFICATIONS");
     m_bfdStateNotificationConsumer->setOpAllowList({"bfd_session_state_change"});
     m_bfdStateNotificationConsumer->setStatsLabel("BfdOrch:bfd_session_state_change");

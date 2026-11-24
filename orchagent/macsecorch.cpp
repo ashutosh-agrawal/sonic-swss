@@ -638,7 +638,7 @@ MACsecOrch::MACsecOrch(
                             m_applPortTable(app_db, APP_PORT_TABLE_NAME),
                             m_counter_db("COUNTERS_DB", 0, false, "", true),
                             m_macsec_counters_map(&m_counter_db, COUNTERS_MACSEC_NAME_MAP),
-                            m_gb_counter_db("GB_COUNTERS_DB", 0),
+                            m_gb_counter_db("GB_COUNTERS_DB", 0, false, "", true),
                             m_gb_macsec_counters_map(&m_gb_counter_db, COUNTERS_MACSEC_NAME_MAP),
                             m_macsec_sa_attr_manager(
                                 COUNTERS_MACSEC_SA_ATTR_GROUP,
@@ -686,7 +686,7 @@ MACsecOrch::MACsecOrch(
     if (post_state == "switch-level-post-in-progress" ||
         post_state == "macsec-level-post-in-progress" )
     {
-        m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0);
+        m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0, false);
         m_postCompletionNotificationConsumer = new swss::NotificationConsumer(m_notificationsDb.get(), "NOTIFICATIONS");
         auto postCompletionNotificatier = new Notifier(m_postCompletionNotificationConsumer, this, "POST_COMPLETION__NOTIFICATIONS");
         Orch::addExecutor(postCompletionNotificatier);

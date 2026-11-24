@@ -311,7 +311,7 @@ L3MulticastManager::L3MulticastManager(P4OidMapper* mapper, VRFOrch* vrfOrch,
                                        ResponsePublisherInterface* publisher)
     : m_p4OidMapper(mapper),
       m_vrfOrch(vrfOrch),
-      m_asic_db("ASIC_DB", 0),
+      m_asic_db("ASIC_DB", 0, false),
       m_asic_state_table(&m_asic_db, "ASIC_STATE") {
   SWSS_LOG_ENTER();
   assert(publisher != nullptr);

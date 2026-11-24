@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         WarmStart::initialize("coppmgrd", "swss", 0, false, true);
         WarmStart::checkWarmStart("coppmgrd", "swss");
 
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appDb("APPL_DB", 0, false, "", true);
         DBConnector stateDb("STATE_DB", 0, false, "", true);
 

@@ -33,7 +33,7 @@ int main(int argc, char **argv)
             CFG_NEIGH_TABLE_NAME,
         };
 
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appDb("APPL_DB", 0, false, "", true);
         DBConnector stateDb("STATE_DB", 0, false, "", true);
 

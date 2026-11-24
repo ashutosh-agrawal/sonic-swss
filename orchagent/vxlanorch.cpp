@@ -1312,7 +1312,7 @@ VxlanTunnelOrch::VxlanTunnelOrch(DBConnector *statedb, DBConnector *db, const st
     FieldValueTuple fv;
     string tunnel_rate_plugin = "tunnel_rates.lua";
     m_counter_db = shared_ptr<DBConnector>(new DBConnector("COUNTERS_DB", 0, false, "", true));
-    m_asic_db = shared_ptr<DBConnector>(new DBConnector("ASIC_DB", 0));
+    m_asic_db = shared_ptr<DBConnector>(new DBConnector("ASIC_DB", 0, false));
     try
     {
         string tunnel_rate_script = swss::loadLuaScript(tunnel_rate_plugin);

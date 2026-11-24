@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     DBConnector appDb("APPL_DB", 0, false, "", true);
     RedisPipeline pipelineAppDB(&appDb);
     DBConnector stateDb("STATE_DB", 0, false, "", true);
-    DBConnector cfgDb("CONFIG_DB", 0);
+    DBConnector cfgDb("CONFIG_DB", 0, false);
 
     NeighSync sync(&pipelineAppDB, &stateDb, &cfgDb, &appDb);
 

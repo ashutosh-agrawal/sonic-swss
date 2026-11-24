@@ -15,7 +15,7 @@ extern "C"
 
 using ::nlohmann::json;
 
-P4OidMapper::P4OidMapper() : m_db("APPL_STATE_DB", 0) {}
+P4OidMapper::P4OidMapper() : m_db("APPL_STATE_DB", 0, false) {}
 
 bool P4OidMapper::setOID(_In_ sai_object_type_t object_type, _In_ const std::string &key, _In_ sai_object_id_t oid,
                          _In_ uint32_t ref_count)

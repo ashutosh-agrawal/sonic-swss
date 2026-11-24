@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     DBConnector appl_db("APPL_DB", 0, false, "", true);
     RedisPipeline pipeline(&appl_db);
 
-    DBConnector config_db("CONFIG_DB", 0);
+    DBConnector config_db("CONFIG_DB", 0, false);
     SubscriberStateTable mclag_cfg_tbl(&config_db, CFG_MCLAG_TABLE_NAME);
 
     map <string, string> learn_mode;

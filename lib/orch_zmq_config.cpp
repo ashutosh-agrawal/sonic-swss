@@ -100,7 +100,7 @@ bool swss::get_feature_status(std::string feature, bool default_value)
 
     try
     {
-        swss::DBConnector config_db("CONFIG_DB", 0);
+        swss::DBConnector config_db("CONFIG_DB", 0, false);
         enabled = config_db.hget("DEVICE_METADATA|localhost", feature);
     }
     catch (const std::runtime_error &e)
@@ -125,7 +125,7 @@ bool swss::get_route_perf_zmq_enabled()
 
     try
     {
-        swss::DBConnector config_db("CONFIG_DB", 0);
+        swss::DBConnector config_db("CONFIG_DB", 0, false);
         value = config_db.hget(SYSTEM_DEFAULTS_SWSS_ZMQ_KEY, SYSTEM_DEFAULTS_STATUS_FIELD);
     }
     catch (const std::runtime_error &e)

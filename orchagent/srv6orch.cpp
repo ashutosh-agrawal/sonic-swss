@@ -131,7 +131,7 @@ void Srv6Orch::initializeCounters()
         return;
     }
 
-    m_asic_db = make_shared<DBConnector>("ASIC_DB", 0);
+    m_asic_db = make_shared<DBConnector>("ASIC_DB", 0, false);
     m_counter_db = make_shared<DBConnector>("COUNTERS_DB", 0, false, "", true);
     m_mysid_counters_table = make_unique<Table>(m_counter_db.get(), COUNTERS_SRV6_NAME_MAP);
 

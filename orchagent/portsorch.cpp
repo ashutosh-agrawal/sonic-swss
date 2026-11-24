@@ -1112,7 +1112,7 @@ PortsOrch::PortsOrch(DBConnector *db, DBConnector *stateDb, vector<table_name_wi
      * what matters), so collapsing duplicates bounds queue depth.
      * Also install an op-allowlist so cross-fanout messages on the
      * shared "NOTIFICATIONS" channel are dropped at admission. */
-    m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0);
+    m_notificationsDb = make_shared<DBConnector>("ASIC_DB", 0, false);
     m_portStatusNotificationConsumer = new swss::NotificationConsumer(
         m_notificationsDb.get(), "NOTIFICATIONS",
         100,                                       // pri -- match swss-common default

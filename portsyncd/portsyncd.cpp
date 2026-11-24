@@ -65,7 +65,7 @@ int main(int argc, char **argv)
             }
         }
 
-        DBConnector cfgDb("CONFIG_DB", 0);
+        DBConnector cfgDb("CONFIG_DB", 0, false);
         DBConnector appl_db("APPL_DB", 0, false, "", true);
         DBConnector state_db("STATE_DB", 0, false, "", true);
         ProducerStateTable p(&appl_db, APP_PORT_TABLE_NAME);
